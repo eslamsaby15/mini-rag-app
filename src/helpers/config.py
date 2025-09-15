@@ -8,6 +8,9 @@ class Setting(BaseSettings) :
     APP_CREATOR:str
     GOOGLE_API_KEY: Optional[str] = None
     LANGSMITH_API_KEY:Optional[str] = None
+    FILE_ALLOW_TYPES:list[str]
+    FILE_MAX_SIZE:int
+    FILE_DEFAULT_CHUNK_SIZE:int
 
     class Config :
         env_file ='.env'

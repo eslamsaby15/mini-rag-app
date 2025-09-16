@@ -3,12 +3,15 @@ from typing import Optional
 from bson.objectid import ObjectId
 
 class ChunkSchema(BaseModel):
-    id : Optional[ObjectId] =Field(None, alias='_id')
-    project_id : str = Field(...,min_length=1)
-    chunk_text : str = Field(...,min_length=1)
-    chunk_meta_data: dict
-    chunk_order : int = Field(...,gt=0)
-    chunk_project_id:ObjectId
+    id: Optional[ObjectId] = Field(None, alias="_id")
+    chunk_text: str = Field(..., min_length=1)
+    chunk_metadata: dict
+    chunk_order: int = Field(..., gt=0)
+    chunk_project_id: ObjectId
+    chunk_asset_id: ObjectId
+
+    
+
 
 
     @classmethod

@@ -8,9 +8,9 @@ class ChunkModel(DataBaseModel) :
     def __init__(self, db_client):
         super().__init__(db_client)
         
-        self.connention = self.db_clinet[DataBaseENUM.COLLECTION_CHUNKS_NAME.value]
+        self.connention = self.db_client[DataBaseENUM.COLLECTION_CHUNKS_NAME.value]
     @classmethod 
-    async def create_instane(cls , db_client):
+    async def create_instance(cls , db_client):
         isinstance = cls(db_client)
         await isinstance.__init__collecton()
         return isinstance
@@ -19,10 +19,10 @@ class ChunkModel(DataBaseModel) :
     async def __init__collecton(self): 
         all_collection = await self.db_client.list_collection_names()
         if DataBaseENUM.COLLECTION_CHUNKS_NAME.value not in all_collection  : 
-            self.connention = self.db_clinet[DataBaseENUM.COLLECTION_CHUNKS_NAME.value]
+            self.connention = self.db_client[DataBaseENUM.COLLECTION_CHUNKS_NAME.value]
             indexes = ChunkSchema.get_indexes() 
             for index  in  indexes:
-                await self.collection.create_index(
+                await self.connention.create_index(
                     index["key"],
                     name=index["name"],
                     unique=index["unique"]
@@ -30,7 +30,7 @@ class ChunkModel(DataBaseModel) :
 
     async def create_chunkdata(self , chunk :ChunkSchema) :
         result = self.connention.insert_one(chunk.dict(by_alias=True, exclude_unset=True))
-        chunk.id = chunk._id
+        chunk.id = result.inserted_id
         return chunk
     
     async def create_or_get(self , chunk_id : str) :
@@ -46,7 +46,7 @@ class ChunkModel(DataBaseModel) :
             operations = [ InsertOne(chunk.dict(by_alias=True , exclude_defaults=True))
                  for chunk in batch]
             
-            await self.collection.bulk_write(operations)
+            await self.connention.bulk_write(operations)
 
         return len(chunks)
     

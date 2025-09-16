@@ -5,8 +5,10 @@ from datetime import datetime
 
 class AssetsSchema(BaseModel) : 
     id : Optional[ObjectId] = Field(None, alias='_id')
+    asset_project_id: ObjectId
     asset_name :str = Field(...,min_length=1)
     asset_size : int = Field(None, gt =0)
+    asset_type: str = Field(..., min_length=1)
     asset_config :dict =Field(default= None)
     asset_pushed_at : datetime = Field(default=datetime.utcnow)
 

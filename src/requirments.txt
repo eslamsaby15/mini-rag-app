@@ -10,3 +10,6 @@ langchain-core
 langgraph
 PyMuPDF
 motor
+openai
+google-generativeai
+cohere

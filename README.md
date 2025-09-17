@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Python 3.8 or later
+- Python 3.11 or later
 
 #### Install Python using MiniConda
 

@@ -13,3 +13,5 @@ motor
 openai
 google-generativeai
 cohere
+qdrant-client
+weaviate

@@ -4,25 +4,33 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from helpers import app_setting
 
 from stores.llm.Providerfactory import LLMProviderFactory
-
+from stores.vectorDB.VectorDbFactory import VectorDBProviderFactory
 app = FastAPI()
 
 @app.on_event('startup') 
 async def start_DB(): 
-    setting = app_setting()
-    app.mongon_connection = AsyncIOMotorClient(setting.MONGODB_URL)
-    app.db_client= app.mongon_connection[setting.MONGODB_DATABASE]
+      setting = app_setting()
+      app.mongon_connection = AsyncIOMotorClient(setting.MONGODB_URL)
+      app.db_client= app.mongon_connection[setting.MONGODB_DATABASE]
 
-    llm_provider_factory = LLMProviderFactory(setting)
+      llm_provider_factory = LLMProviderFactory(setting)
 
-    # generation client
-    app.generation_client = llm_provider_factory.create(provider=setting.GENERATION_BACKEND2)
-    app.generation_client.set_generation_model(model_id = setting.GENERATION_MODEL_ID_GEMINI)
+      # generation client
+      app.generation_client = llm_provider_factory.create(provider=setting.GENERATION_BACKEND2)
+      app.generation_client.set_generation_model(model_id = setting.GENERATION_MODEL_ID_GEMINI)
 
-     # embedding client
-    app.embedding_client = llm_provider_factory.create(provider=setting.EMBEDDING_BACKEND)
-    app.embedding_client.set_embedding_model(model_id=setting.EMBEDDING_MODEL_ID_COHERE,
-                                             embedding_size=setting.EMBEDDING_MODEL_SIZE_COHERE)
+      # embedding client
+      app.embedding_client = llm_provider_factory.create(provider=setting.EMBEDDING_BACKEND)
+      app.embedding_client.set_embedding_model(model_id=setting.EMBEDDING_MODEL_ID_COHERE,
+                                                embedding_size=setting.EMBEDDING_MODEL_SIZE_COHERE)
+
+      app.vectordb_client = VectorDBProviderFactory.create(
+         provider=setting.VECTOR_DB_BACKEND
+      )
+      app.vectordb_client.connect()
+      app.vectordb_client.disconnect()
+      
+
 
 
 @app.on_event('shutdown') 

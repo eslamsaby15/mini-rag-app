@@ -28,7 +28,7 @@ class VectorDBInterFace(ABC):
         pass
 
     @abstractmethod 
-    def creat_collection(self, collection_name: str, 
+    def create_collection(self, collection_name: str, 
                                 embedding_size: int,
                                 do_reset: bool = False):
         pass

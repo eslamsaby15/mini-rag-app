@@ -56,3 +56,13 @@ class ChunkModel(DataBaseModel) :
         })
 
         return result.deleted_count
+    
+    async def get_project_cuhnks(self, project_id : ObjectId , 
+                                 page_no : int = 1 , page_size : int = 50) : 
+        records = await self.connention.find({
+                    "chunk_project_id": project_id
+                }).skip(
+                    (page_no-1) * page_size
+                ).limit(page_size).to_list(length=page_size)
+        
+        return [ChunkSchema(**record) for record in records]

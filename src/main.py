@@ -1,5 +1,5 @@
 from fastapi import FastAPI 
-from routers import base_router ,data_router
+from routers import base_router ,data_router ,nlp_router
 from motor.motor_asyncio import AsyncIOMotorClient
 from helpers import app_setting
 
@@ -14,6 +14,7 @@ async def start_DB():
       app.db_client= app.mongon_connection[setting.MONGODB_DATABASE]
 
       llm_provider_factory = LLMProviderFactory(setting)
+      vectordb_provider_factory = VectorDBProviderFactory(setting)
 
       # generation client
       app.generation_client = llm_provider_factory.create(provider=setting.GENERATION_BACKEND2)
@@ -21,14 +22,13 @@ async def start_DB():
 
       # embedding client
       app.embedding_client = llm_provider_factory.create(provider=setting.EMBEDDING_BACKEND)
-      app.embedding_client.set_embedding_model(model_id=setting.EMBEDDING_MODEL_ID_COHERE,
+      app.embedding_client.set_embedded_model(model_id=setting.EMBEDDING_MODEL_ID_COHERE,
                                                 embedding_size=setting.EMBEDDING_MODEL_SIZE_COHERE)
 
-      app.vectordb_client = VectorDBProviderFactory.create(
+      app.vectordb_client = vectordb_provider_factory.create(
          provider=setting.VECTOR_DB_BACKEND
       )
       app.vectordb_client.connect()
-      app.vectordb_client.disconnect()
       
 
 
@@ -36,6 +36,8 @@ async def start_DB():
 @app.on_event('shutdown') 
 async def shuddown(): 
    app.mongon_connection.close()
+   app.vectordb_client.disconnect()
 
 app.include_router(base_router)
 app.include_router(data_router)
+app.include_router(nlp_router)

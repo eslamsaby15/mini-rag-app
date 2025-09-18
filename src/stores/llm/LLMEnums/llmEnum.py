@@ -22,3 +22,13 @@ class CoHereEnums(Enum):
 class DocumentTypeEnum(Enum):
     DOCUMENT = "document"
     QUERY = "query"
+
+
+
+class GeminiEnums(Enum):
+    SYSTEM = "system"
+    USER = "user"
+    MODEL = "model"   
+    
+    DOCUMENT = "retrieval_document"
+    QUERY = "retrieval_query"

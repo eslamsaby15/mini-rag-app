@@ -41,6 +41,7 @@ class CoHereProvider(LLMInterFace):
     
 
     def embedd_text(self, text  : Union[str, List[str]], document_type = None):
+
         if not self.embedd_model_id : 
             self.logger.error("Embedding model for CoHere was not set")
             return None
@@ -67,3 +68,29 @@ class CoHereProvider(LLMInterFace):
             return None
         
         return [ f for f in response.embeddings.float ]
+    
+
+    def generate_text(self, prompt, chat_history = [] ,max_output_tokens = None, temperature = 0.3):
+        if not self.client : 
+            self.logger("CoHere client was not set")
+            return None
+        if not self.gen_model_id :
+            self.logger.error("Generation model for CoHere was not set")
+            return None
+        
+        max_output_tokens = max_output_tokens if max_output_tokens else self.default_generation_max_output_tokens
+        temperature = temperature if temperature else self.default_generation_temperature
+
+        response = self.client.chat(
+            model = self.generation_model_id,
+            chat_history = chat_history,
+            message = self.process_text(prompt),
+            temperature = temperature,
+            max_tokens = max_output_tokens
+        )
+
+        if not response or not response.text:
+            self.logger.error("Error while generating text with CoHere")
+            return None
+        
+        return response.text

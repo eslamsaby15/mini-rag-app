@@ -1,1 +1,1 @@
-from .llmEnum import LLMEnums ,OpenEnums , CoHereEnums ,DocumentTypeEnum
+from .llmEnum import LLMEnums ,OpenEnums , CoHereEnums ,DocumentTypeEnum ,GeminiEnums

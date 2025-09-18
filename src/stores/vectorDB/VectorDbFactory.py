@@ -1,12 +1,12 @@
 from helpers.config import Setting , app_setting
 from .providers import QdrantDB
 from .vectordbEnum import VectorDBEnums
-from controllers import BaseController
+from controllers.BaseController import BaseModelController
 
 class VectorDBProviderFactory :
     def __init__(self , config  :Setting):
         self.config = config
-        self.base_controller = BaseController()
+        self.base_controller = BaseModelController()
         pass
 
     def create(self,provider : str ): 

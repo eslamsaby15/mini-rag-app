@@ -26,7 +26,7 @@ class BaseModelController:
     def get_database_path(self , db_name : str) :
 
         database_path = os.path.join(self.database_dir , 
-                                     database_path)
+                                     db_name)
         
         if not os.path.exists(database_path):
             os.makedirs(database_path)

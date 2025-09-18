@@ -33,7 +33,7 @@ class Setting(BaseSettings) :
     EMBEDDING_MODEL_ID_GEMINI :str  = None
     EMBEDDING_MODEL_SIZE_GEMINI : int = None
 
-    INPUT_DEFAULT_MAX_CHARACTERS : int = None
+    INPUT_DAFAULT_MAX_CHARACTERS : int = None
     GENERATION_DEFAULT_MAX_TOKENS : int = None
     GENERATION_DEFAULT_TEMPERATURE : float  = None
 

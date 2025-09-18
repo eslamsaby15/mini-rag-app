@@ -40,25 +40,22 @@ class CoHereProvider(LLMInterFace):
                 'content'  : self.process_text(prompt)}
     
 
-    def embedd_text(self, text  : Union[str, List[str]], document_type = None):
-
-        if not self.embedd_model_id : 
-            self.logger.error("Embedding model for CoHere was not set")
-            return None
-        if not self.client : 
+    def embedd_text(self, text: str, document_type: str = None):
+        if not self.client:
             self.logger.error("CoHere client was not set")
             return None
         
-        if isinstance(text, str):
-            text = [text]
-
+        if not self.embedd_model_id:
+            self.logger.error("Embedding model for CoHere was not set")
+            return None
+        
         input_type = CoHereEnums.DOCUMENT
         if document_type == DocumentTypeEnum.QUERY:
-            input_type =CoHereEnums.QUERY
+            input_type = CoHereEnums.QUERY
 
         response = self.client.embed(
-            model = self.embedding_model_id,
-            texts = [ self.process_text(t) for t in text ],
+            model =  self.embedd_model_id, 
+            texts = [self.process_text(text)],
             input_type = input_type,
             embedding_types=['float'],
         )
@@ -67,7 +64,8 @@ class CoHereProvider(LLMInterFace):
             self.logger.error("Error while embedding text with CoHere")
             return None
         
-        return [ f for f in response.embeddings.float ]
+        return response.embeddings.float[0]
+        
     
 
     def generate_text(self, prompt, chat_history = [] ,max_output_tokens = None, temperature = 0.3):

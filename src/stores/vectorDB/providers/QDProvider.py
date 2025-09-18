@@ -6,8 +6,8 @@ import logging
 class QdrantDB(VectorDBInterFace) : 
     def __init__(self , db_path : str ,  distance_method: str):
         self.client = None
-        self.db_path = None
-        self. distance_method = None 
+        self.db_path = db_path
+        self. distance_method = distance_method 
 
 
         if distance_method == DistanceMethodEnums.COSINE.value:
@@ -26,9 +26,33 @@ class QdrantDB(VectorDBInterFace) :
     def is_collection_exist(self, collection_name):
         return self.client.collection_exists(collection_name=collection_name)
     
+
     def list_all_collections(self):
         return self.client.get_collections()
     
+
+
+    def create_collection(self, collection_name: str, 
+                                embedding_size: int,
+                                do_reset: bool = False):
+        if do_reset:
+            _ = self.delete_collection(collection_name=collection_name)
+        
+        if not self.is_collection_exist(collection_name):
+            _ = self.client.create_collection(
+                collection_name=collection_name,
+                vectors_config=models.VectorParams(
+                    size=embedding_size,
+                    distance=self.distance_method
+                )
+            )
+
+            return True
+        
+        return False
+
+
+
     def delete_collection(self, collection_name):
         return self.client.delete_collection(collection_name=collection_name)
     
@@ -53,7 +77,7 @@ class QdrantDB(VectorDBInterFace) :
         try :
             _ = self.client.upload_records(
                 collection_name= collection_name ,
-                records= [models.Record(vector= vector , 
+                records= [models.Record(vector= vector , id = [record_id] , 
                                         payload= {'text' : text ,
                                                   'metadata' :metadata})]
             ) 
@@ -81,18 +105,20 @@ class QdrantDB(VectorDBInterFace) :
             batch_texts = texts[i:batch_end]
             batch_vectors = vectors[i:batch_end]
             batch_metadata = metadata[i:batch_end]
+            batch_record_ids = record_ids[i:batch_end]
             
             batch_records= [ 
                 models.Record(
                     vector= batch_vectors[x] , 
                     payload= {'text': batch_texts[x] , 
-                              'metadata' : batch_metadata[x]}
+                              'metadata' : batch_metadata[x]} , 
+                              id= batch_record_ids[x]
                 )
                 for x in range(len(batch_texts))
             ]
 
             try : 
-                _ = self.client.upload(collection_name=collection_name,
+                _ = self.client.upload_records(collection_name=collection_name,
                     records=batch_records)
                 
             except Exception as e:

@@ -72,7 +72,7 @@ async def upload_file(request : Request , project_id : str , file : UploadFile  
 
 
     
-@data_router.post('/prodess/{project_id}')
+@data_router.post('/process/{project_id}')
 async def Proces_file(request : Request  , project_id :str , process_request : DataRequest ) : 
     
     

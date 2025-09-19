@@ -1,6 +1,7 @@
 from qdrant_client import QdrantClient,models
 from ..vectordbEnum import VectorDBEnums ,DistanceMethodEnums
 from ..VectorDbInterFace import VectorDBInterFace
+from models.db_schema.chunkschema import RetrievedDocument
 import logging
 
 class QdrantDB(VectorDBInterFace) : 
@@ -31,7 +32,6 @@ class QdrantDB(VectorDBInterFace) :
         return self.client.get_collections()
     
 
-
     def create_collection(self, collection_name: str, 
                                 embedding_size: int,
                                 do_reset: bool = False):
@@ -51,21 +51,35 @@ class QdrantDB(VectorDBInterFace) :
         
         return False
 
-
-
     def delete_collection(self, collection_name):
         return self.client.delete_collection(collection_name=collection_name)
-    
+
     def get_collection_info(self, collection_name):
         return self.client.get_collection(collection_name=collection_name)
     
-    def search_by_vector(self, collection_name  :str ,vector : list,  limit : int) :
+    def search_by_vector(self, collection_name  :str ,vector : list,  limit : int =5) :
         
-        return self.client.search(
+        results=  self.client.search(
             collection_name= collection_name , 
             query_vector= vector ,
             limit = limit
         )
+
+        if not results or len(results) ==0 :
+            return None
+        
+      
+        
+        return  [
+            RetrievedDocument(**{
+                "score" : result.score,
+                "text" : result.payload['text']
+            })
+            for result in results
+        ]
+
+    
+
 
     def insert_one(self, collection_name, text, vector, metadata = None, record_id=None):
 

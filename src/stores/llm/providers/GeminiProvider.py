@@ -19,6 +19,7 @@ class GenAIProvider(LLMInterFace):
         self.gen_model_id = None
         self.embedd_model_id = None
         self.embedding_size = None
+        self.enums = GeminiEnums
 
         genai.configure(api_key=self.api_key)
         self.logger = logging.getLogger(__name__)

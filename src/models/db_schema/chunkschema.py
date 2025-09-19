@@ -22,3 +22,6 @@ class ChunkSchema(BaseModel):
         allow_population_by_field_name = True
   
 
+class RetrievedDocument(BaseModel):
+    text: str
+    score: float

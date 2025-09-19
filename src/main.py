@@ -5,6 +5,7 @@ from helpers import app_setting
 
 from stores.llm.Providerfactory import LLMProviderFactory
 from stores.vectorDB.VectorDbFactory import VectorDBProviderFactory
+from stores.llm.TemplateParser.template_parser import TemplateParser
 app = FastAPI()
 
 @app.on_event('startup') 
@@ -29,6 +30,11 @@ async def start_DB():
          provider=setting.VECTOR_DB_BACKEND
       )
       app.vectordb_client.connect()
+
+      app.template_parser = TemplateParser(
+           lang= setting.PRIMARY_LANG
+           ,def_lang= setting.DEFAULT_LANG
+      )
       
 
 
